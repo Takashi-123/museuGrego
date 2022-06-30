@@ -1,0 +1,162 @@
+import React from "react";
+import { Box, Heading, AspectRatio, Image, Text, Center, HStack, Stack, NativeBaseProvider,
+ Input, IconButton, Checkbox, VStack, Icon, useToast } from "native-base";
+import { useContrastText } from "native-base";
+import { Feather, Entypo } from "@expo/vector-icons";
+
+
+const Example = () => {
+  return <Box alignItems="center">
+      <Box maxW="80" rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1" _dark={{
+      borderColor: "coolGray.600",
+      backgroundColor: "gray.700"
+    }} _web={{
+      shadow: 2,
+      borderWidth: 0
+    }} _light={{
+      backgroundColor: "gray.50"
+    }}>
+        <Box>
+          <AspectRatio w="100%" ratio={16 / 9}>
+            <Image source={{
+            uri: "https://img.itinari.com/page/content/original/b2a35662-9963-463b-8652-cc048f900855-olympus.jpg?ch=DPR&dpr=1&w=994&s=3746291b679ce4ec5bee1f9842e8007c"
+          }} alt="image" />
+          </AspectRatio>
+          <Center bg="amber.700" _dark={{
+          bg: "violet.400"
+        }} _text={{
+          color: "lime.400",
+          fontWeight: "700",
+          fontSize: "xs"
+        }} position="center" bottom="175" px="3" py="1.0">
+            A Morada dos Deuses Gregos
+          </Center>
+        </Box>
+        <Stack p="4" space={3}>
+          <Stack space={2}>
+            <Heading size="xl" ml="10">
+              Monte Olímpio
+            </Heading>
+            <Text underline fontSize="lg" _light={{
+            color: "pink.600"
+          }} _dark={{
+            color: "violet.400"
+          }} fontWeight="400" ml="10" mt="-1">
+              A realeza grega mora aqui!
+            </Text>
+          </Stack>
+          <Text fontWeight="300">
+            Nas histórias da mitologia grega temos a forte presença do local onde habitam os deuses, o Monte Olimpo, lar de criação das mais diversas condições míticas. O Monte Olimpo existe de verdade e fica na região da Tessália, próximo ao mar Egeu. Possui 2.917 metros de altitude e uma flora especial que só se desenvolve naquele lugar. Há quem diga que aquela região é realmente abençoada pelos deuses.
+          </Text>
+          <HStack alignItems="center" space={4} justifyContent="space-between">
+            <HStack alignItems="center">
+              <Text color="darkBlue.600" _dark={{
+              color: "warmGray.200"
+            }} fontWeight="400">
+                24 mins ago
+              </Text>
+            </HStack>
+          </HStack>
+        </Stack>
+      </Box>
+    </Box>;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const Example2 = () => {
+  const instState = [{
+    title: "Sala das Estátuas",
+    isCompleted: true
+  }, {
+    title: "História dos Deuses",
+    isCompleted: false
+  }, {
+    title: "Simbolos de Poder dos Deuses",
+    isCompleted: false
+  }, {
+    title: "Loja de Souvenir",
+    isCompleted: false
+  }];
+  const [list, setList] = React.useState(instState);
+  const [inputValue, setInputValue] = React.useState("");
+  const toast = useToast();
+
+  const addItem = title => {
+    if (title === "") {
+      toast.show({
+        title: "Por Favor Adicione um Texto",
+        status: "warning"
+      });
+      return;
+    }
+
+    setList(prevList => {
+      return [...prevList, {
+        title: title,
+        isCompleted: false
+      }];
+    });
+  };
+
+  const handleDelete = index => {
+    setList(prevList => {
+      const temp = prevList.filter((_, itemI) => itemI !== index);
+      return temp;
+    });
+  };
+
+  const handleStatusChange = index => {
+    setList(prevList => {
+      const newList = [...prevList];
+      newList[index].isCompleted = !newList[index].isCompleted;
+      return newList;
+    });
+  };
+
+  return <Center w="100%">
+      <Box maxW="300" w="100%">
+        <Heading mb="2" size="md">
+          Museu de Historia Grega
+        </Heading>
+        <VStack space={4}>
+          <HStack space={2}>
+            <Input flex={1} onChangeText={v => setInputValue(v)} value={inputValue} placeholder="Adicionar Tarefa" />
+            <IconButton borderRadius="sm" variant="solid" icon={<Icon as={Feather} name="plus" size="sm" color="warmGray.50" />} onPress={() => {
+            addItem(inputValue);
+            setInputValue("");
+          }} />
+          </HStack>
+          <VStack space={2}>
+            {list.map((item, itemI) => <HStack w="100%" justifyContent="space-between" alignItems="center" key={item.title + itemI.toString()}>
+                <Checkbox isChecked={item.isCompleted} onChange={() => handleStatusChange(itemI)} value={item.title}></Checkbox>
+                <Text width="100%" flexShrink={1} textAlign="left" mx="2" strikeThrough={item.isCompleted} _light={{
+              color: item.isCompleted ? "gray.400" : "coolGray.800"
+            }} _dark={{
+              color: item.isCompleted ? "gray.400" : "coolGray.50"
+            }} onPress={() => handleStatusChange(itemI)}>
+                  {item.title}
+                </Text>
+                <IconButton size="sm" colorScheme="trueGray" icon={<Icon as={Entypo} name="minus" size="xs" color="trueGray.400" />} onPress={() => handleDelete(itemI)} />
+              </HStack>)}
+          </VStack>
+        </VStack>
+      </Box>
+    </Center>;
+};
+    
+
+    export default () => {
+        return (
+          <NativeBaseProvider>
+            <Center flex={1} px="3" backgroundColor="#dfe3d8">
+                <Example />
+                <br/>
+                <br/>
+                <br/>
+                <Example2 />
+            </Center>
+          </NativeBaseProvider>
+        );
+    };
+    
